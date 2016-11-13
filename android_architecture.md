@@ -10,7 +10,7 @@
 * **独立于任何外部代理**
 
 
-![architecture figure](./architecture.png)
+![architecture figure](./art/architecture.png)
 
 上图是现在要介绍的基本的软件架构图。每一个圈都代表一个层级，在真正的应用中可以根据自己的项目规模适当精简，但这里有一个基本的依赖法则：各层级的依赖只能是从外向内，绝对不能反向依赖，因为内层不应该知道外层的逻辑，原则上内层只需要提供接口给外层就行。接下来我们根据此图来介绍这个软件架构的工作原理，先介绍几个术语：
 * **Entities：**应用的业务实体
@@ -22,13 +22,13 @@
 
 ### 安卓应用架构
 整体架构分为3层，由外向内分别为：Presentation Layer（显示层）--> Domain Layer（业务层）--> Data Layer（数据层）。各个层级的通信通过接口显现，内层不需要知道外层的任何细节。在这个架构中，Domain Layer是可选的，这个层级非常灵活，可以根据具体的项目规模与特点来对这个层级做调整。在这里，我先介绍每个层级的作用，然后再介绍如何对Domain Layer做调整。
-![architecture android figure](./architecture_android.png)
+![architecture android figure](./art/architecture_android.png)
 
 #### Presentation Layer
 这个层级在安卓中就是安卓应用的UI层了，关于这个层级的设计，已经有比较成熟的实现方案，这就是我们熟悉的MVP设计模式。通过Presenter控制View层和Model层的交互，隔离了View和Model，这样View不用再关心数据来源，只是单纯的显示数据。Presenter承担了大部分的控制逻辑，所以当控制逻辑变得复杂时，它会变得臃肿，这也就出现了MVVM，在这里不再对其做描述了。
 强烈推荐使用MVP来实现这个层级，它已经被广大开发者所熟悉，代码的可读性和可维护性将极大的提高。
 
-![architecture mvp figure](./architecture_mvp.png)
+![architecture mvp figure](./art/architecture_mvp.png)
 
 总之，Presentation Layer整体都是显示层，对数据的控制较少，主要依赖Domain Layer提供的数据做显示逻辑。如果应用对架构没有太高的要求，可以通过扩展MVP实现整体的架构，当然，这样也就基本失去开头描述的所有软件架构的优势与优雅。
 
@@ -49,7 +49,7 @@
 数据层可以说是一个影响性能的层级，所以，这个层级的实现直接关乎了整个应用的体验。但这个层级的设计是很清晰的，基本上都会有一层memory cache，缓存数据要么来自本地，要么来自网络。这其中的难点就是，如何做到缓存与持久化，网络数据同步。在安卓应用中这部分的工作需要在非主线程上做，所以对线程同步设计要求比较高。由于本篇主要介绍架构，关于如何做同步，这个先不在这里做详细的讲解了。
 
 ### 应用包结构图
-![architecture package figure](./package.png)
+![architecture package figure](./art/architecture_package.png)
 
 上图是我的项目包结构图，基本实现了上面介绍的架构。我还是强烈推荐大家试一试这个架构，层次结构还是非常清晰的，可读性也很高。而且也可以针对不同层级做测试。但这个结构对单元测试的支持性不太好，我并没有在Domain中把每个用例做成一个接口，而是把逻辑相关的业务都放在一个Actor中，这样Actor会做不同的事，单元测试也就相对麻烦。之所以这样做，完全处于目前这个项目不需要，但是如果你自己的项目规模足够大。那么还是很有必要为每个用例设计不同的接口的。
 至于项目中还会有些其他的类，在这里就不做介绍了，后面我会写相关文章介绍各个模块用到的技术和具体实现。
