@@ -3,5 +3,5 @@
 
 :bulb:**_all the other files are separate blogs_**
 
-* ## android_architecture.md
+## android_architecture.md
 Talks about how to architect an android app.
